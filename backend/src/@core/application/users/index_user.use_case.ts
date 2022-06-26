@@ -6,8 +6,12 @@ export class IndexUsersUseCase {
   constructor(private userRepo: UserRepositoryInterface) {}
 
   async execute(): Promise<IndexUsersOutput> {
-    const users = await this.userRepo.findAll();
-    return users.map((user) => user.toJSON());
+    try {
+      const users = await this.userRepo.findAll();
+      return users.map((user) => user.toJSON());
+    } catch (error) {
+      throw { message: `could not possible list users: ${error}` };
+    }
   }
 }
 

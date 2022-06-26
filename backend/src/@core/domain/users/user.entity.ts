@@ -36,10 +36,41 @@ export class User {
       ...props,
       avatar: props.avatar || '',
       address: props.address || [],
-      password: HashPass(props.password),
       passwordResetExpires: props.passwordResetExpires || null,
       passwordResetToken: props.passwordResetToken || null,
     };
+  }
+
+  static create(props: UserProps, id?: string) {
+    props = { ...props, password: HashPass(props.password) };
+
+    return new User(props, id);
+  }
+
+  static update(props: UserProps, id?: string) {
+    const user = new User(props, id);
+
+    if (props.avatar) {
+      user.updateAvatar(props.avatar);
+    }
+
+    if (props.roles) {
+      user.updateUserRoles(props.roles);
+    }
+
+    if (props.password) {
+      user.updatePassword(props.password);
+    }
+
+    if (props.address) {
+      user.updateUserAddress(props.address);
+    }
+
+    if (props.name || props.phone || props.email) {
+      user.updateUserData(props.name, props.phone, props.email);
+    }
+
+    return user;
   }
 
   updateAvatar(avatar: string) {
@@ -58,6 +89,10 @@ export class User {
 
   updateUserRoles(roles: Role[]) {
     this.roles = roles;
+  }
+
+  updatePassword(password: string) {
+    this.password = HashPass(password);
   }
 
   get avatar() {
